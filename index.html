@@ -155,10 +155,14 @@ body.desktop-app.app-nav .phone{display:grid;grid-template-columns:238px minmax(
 body.desktop-app.app-nav .phone .screen{grid-column:2;grid-row:1;max-width:none;margin:0;padding:36px 46px 44px}
 body.desktop-app.app-nav .phone .bottom-nav{grid-column:1;grid-row:1;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;height:auto;flex:none;gap:4px;padding:26px 16px;border-top:0;border-right:1px solid #e6edf7;background:#fbfcfe}
 body.desktop-app.app-nav .phone .nav-brand{display:flex;align-items:center;gap:10px;padding:2px 8px 24px}
-body.desktop-app.app-nav .bottom-nav button{flex:0 0 auto;height:46px;flex-direction:row;justify-content:flex-start;gap:12px;padding:0 14px;font-size:13px;font-weight:600;border-radius:11px}
-body.desktop-app.app-nav .bottom-nav button.active{background:#eaf1ff}
+body.desktop-app.app-nav .bottom-nav button{display:flex;align-items:center;justify-content:flex-start;width:100%;flex:0 0 auto;height:44px;gap:12px;padding:0 13px;font-size:13px;font-weight:600;border-radius:11px;text-align:left}
+body.desktop-app.app-nav .bottom-nav button:hover{background:#f0f4fb}
+body.desktop-app.app-nav .bottom-nav button.active{background:#eaf1ff;color:var(--blue);font-weight:650}
+body.desktop-app.app-nav .bottom-nav .nav-icon{display:grid;place-items:center;width:20px;height:20px;flex:0 0 20px;color:inherit}
 body.desktop-app.app-nav .nav-icon svg{width:20px;height:20px}
-body.desktop-app.app-nav .id-grid{grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+body.desktop-app.app-nav .id-grid{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+body.desktop-app.app-nav .screen-head{justify-content:flex-end}
+body.desktop-app.app-nav .screen-head .screen-brand{display:none}
 body.desktop-app.participant-mode .topbar,body.desktop-app.participant-mode .intro,body.desktop-app.participant-mode .footnote{display:none}
 body.desktop-app.participant-mode .page{margin:0;padding:0;max-width:none}
 body.desktop-app.participant-mode .layout{display:block;margin:0}
@@ -280,7 +284,7 @@ body.facilitator.desktop-app .phone{height:min(820px,calc(100vh - 250px))}
       return;
     }
     if(state.screen==='id-select'){
-      screenEl.innerHTML=`<div class="screen-titlebar"><button class="back-button" data-action="setup-back">← &nbsp;Back</button><span>Select official IDs</span></div><div class="eyebrow">Step 2 of 4 · ID selection</div><h2 style="margin-top:8px;font-size:24px">Which IDs do you have?</h2><p class="subline">Choose up to 3 to start. You can add the rest later from your wallet.</p><div class="search-field"><span class="search-icon" aria-hidden="true">⌕</span><input type="search" data-id-search placeholder="Search ID name or agency" value="${escapeHtml(state.idQuery)}" aria-label="Search Philippine government IDs" autocomplete="off"></div><div id="id-option-list">${ID_TYPES.map(entry=>{const added=state.ids.some(x=>x.code===entry.code);const chosen=state.chosen.has(entry.code);return `<div class="id-option ${chosen?'selected':''} ${added?'added':''}" role="checkbox" aria-checked="${chosen||added}" tabindex="${added?'-1':'0'}" data-action="${added?'noop':'pick-id'}" data-id="${entry.code}" data-search="${escapeHtml(`${entry.short} ${entry.name} ${entry.issuer}`.toLowerCase())}"><span class="check-box ${chosen||added?'checked':''}">${chosen||added?'✓':''}</span><span><b>${escapeHtml(entry.short)}</b><small>${escapeHtml(entry.issuer)}</small></span><span class="check-label">${added?'In wallet':chosen?'Selected':'Add'}</span></div>`}).join('')}</div><div id="id-empty" class="empty-records" hidden>No government ID matched your search.</div><div class="selection-bar"><p class="id-summary">${state.chosen.size} of 3 selected · ${state.ids.length} in your wallet</p><button class="primary" data-action="confirm-selection" ${state.chosen.size?'':'disabled'}>Continue</button><button class="cancel-text" data-action="setup-back" style="width:100%">Cancel</button></div>`;
+      screenEl.innerHTML=`<div class="screen-titlebar"><button class="back-button" data-action="setup-back">← &nbsp;Back</button><span>${state.addMode?'Add an ID':'Select official IDs'}</span></div><div class="eyebrow">${state.addMode?'Add to wallet':'Step 2 of 4 · ID selection'}</div><h2 style="margin-top:8px;font-size:24px">${state.addMode?'Add another ID':'Which IDs do you have?'}</h2><p class="subline">${state.addMode?'Choose the ID you want to add to this wallet.':'Choose up to 3 to start. You can add the rest later from your wallet.'}</p><div class="search-field"><span class="search-icon" aria-hidden="true">⌕</span><input type="search" data-id-search placeholder="Search ID name or agency" value="${escapeHtml(state.idQuery)}" aria-label="Search Philippine government IDs" autocomplete="off"></div><div id="id-option-list">${ID_TYPES.map(entry=>{const added=state.ids.some(x=>x.code===entry.code);const chosen=state.chosen.has(entry.code);return `<div class="id-option ${chosen?'selected':''} ${added?'added':''}" role="checkbox" aria-checked="${chosen||added}" tabindex="${added?'-1':'0'}" data-action="${added?'noop':'pick-id'}" data-id="${entry.code}" data-search="${escapeHtml(`${entry.short} ${entry.name} ${entry.issuer}`.toLowerCase())}"><span class="check-box ${chosen||added?'checked':''}">${chosen||added?'✓':''}</span><span><b>${escapeHtml(entry.short)}</b><small>${escapeHtml(entry.issuer)}</small></span><span class="check-label">${added?'In wallet':chosen?'Selected':'Add'}</span></div>`}).join('')}</div><div id="id-empty" class="empty-records" hidden>No government ID matched your search.</div><div class="selection-bar"><p class="id-summary">${state.chosen.size} of 3 selected · ${state.ids.length} in your wallet</p><button class="primary" data-action="confirm-selection" ${state.chosen.size?'':'disabled'}>Continue</button><button class="cancel-text" data-action="setup-back" style="width:100%">Cancel</button></div>`;
       filterIdOptions();
       return;
     }
@@ -549,7 +553,7 @@ body.facilitator.desktop-app .phone{height:min(820px,calc(100vh - 250px))}
       else if(action==='add-id-from-home'){state.addMode=true;state.chosen=new Set();state.idQuery='';state.scanStep='front';state.scanStatus='idle';state.screen='id-select'}
       else if(action==='open-id'){if(!target)return;state.viewId=target;state.presenting=false;state.screen='id-detail'}
       else if(action==='back-home'){state.presenting=false;state.screen='home';state.nav='Wallet'}
-      else if(action==='setup-back'){state.scanToken++;state.scanStatus='idle';state.screen=state.screen==='id-review'?'id-select':'welcome'}
+      else if(action==='setup-back'){state.scanToken++;state.scanStatus='idle';if(state.addMode){state.addMode=false;state.screen='home';state.nav='Wallet'}else state.screen=state.screen==='id-review'?'id-select':'welcome'}
       else if(action==='noop'){return}
       else if(action==='present'){
         if(!state.ids.length){showToast('Add an ID first.');return}
